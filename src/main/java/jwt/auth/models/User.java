@@ -17,11 +17,11 @@ public class User implements Serializable {
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
+    @Column
     private String fname;
-    @Column(nullable = false)
+    @Column
     private String lname;
     @Email
-    @Column(nullable = false, unique = true)
+    @Column
     private String email;
 }

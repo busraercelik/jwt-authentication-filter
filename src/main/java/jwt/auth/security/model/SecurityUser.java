@@ -1,11 +1,12 @@
 package jwt.auth.security.model;
 
 import jwt.auth.models.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-
+@Data
 public class SecurityUser implements UserDetails {
 
     User user;

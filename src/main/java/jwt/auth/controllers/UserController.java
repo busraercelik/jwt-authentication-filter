@@ -7,10 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static jwt.auth.security.constants.SecurityConstant.SIGN_UP_URL;
 
@@ -21,7 +18,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping(name = "/hello")
+    @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public ResponseEntity<?> hello(){
         String username= (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println("User "+username+" is running the request!");
@@ -29,9 +26,9 @@ public class UserController {
         return new ResponseEntity<>("Hello", HttpStatus.OK);
     }
 
-    @PostMapping(name = SIGN_UP_URL)
+    @RequestMapping(value = SIGN_UP_URL, method = RequestMethod.POST)
     public ResponseEntity<?> createNewUser(@RequestBody UserCredentialDto credentialDto){
-        System.out.println("osoagduadiagu");
+        System.out.println("Running..");
         return new ResponseEntity<>(userService.registerNewUserAccount(credentialDto), HttpStatus.OK);
     }
 }

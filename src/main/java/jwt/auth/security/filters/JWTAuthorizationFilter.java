@@ -26,6 +26,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
+        System.out.println("JWTAuthorizationFilter: doFilterInternal() processing "+req.getRequestURI());
         String header = req.getHeader(HEADER_STRING);
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
@@ -37,7 +38,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
         //MOST IMPORTANT STEP
-        //if the request doesn't set a authentication object in SecurityContext, it will throw a 401/403
+        //if the request doesn't set a authentication object in SecurityContext, it will throw a 403
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }

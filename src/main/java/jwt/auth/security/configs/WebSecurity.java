@@ -1,11 +1,9 @@
 package jwt.auth.security.configs;
 
-import jwt.auth.security.filters.JWTAuthenticationFilter;
+import jwt.auth.security.filters.LoginJWTAuthenticationFilter;
 import jwt.auth.security.filters.JWTAuthorizationFilter;
 import jwt.auth.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,11 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static jwt.auth.security.constants.SecurityConstant.LOGIN_URL;
 import static jwt.auth.security.constants.SecurityConstant.SIGN_UP_URL;
 
 @EnableWebSecurity
@@ -34,15 +28,23 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        System.out.println("loading web security configuration");
         http.cors().and().csrf().disable()
                 .authorizeRequests()
+                //permitAll() means allow the matching url to go through without spring security blocking it
                 .antMatchers(SIGN_UP_URL).permitAll()
+                //any other request must be authenticated
                 .anyRequest().authenticated()
                 .and()
+                // /login only
+                .addFilter(new LoginJWTAuthenticationFilter(this.authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(this.authenticationManager()))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+    //let authentication manager know which service has the "loadUserByUsername()" function impl
+    //so that when there is a attempt to authenticate, this service can be used to load the user from db
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
